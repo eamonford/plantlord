@@ -16,5 +16,6 @@ include 'services:webservice'
 */
 
 include 'irrigator'
+include 'ingestor'
 
 rootProject.name = 'Dionysus'

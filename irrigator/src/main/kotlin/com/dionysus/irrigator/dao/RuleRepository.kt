@@ -1,5 +1,5 @@
-package com.dionysus.dao
-import com.dionysus.domain.Rule
+package com.dionysus.irrigator.dao
+import com.dionysus.irrigator.domain.Rule
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.map
 import org.jetbrains.exposed.dao.EntityID

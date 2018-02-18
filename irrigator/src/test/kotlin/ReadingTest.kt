@@ -1,5 +1,5 @@
 import com.beust.klaxon.Klaxon
-import com.dionysus.domain.Reading
+import com.dionysus.irrigator.domain.Reading
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it

@@ -1,4 +1,4 @@
-package com.dionysus.domain
+package com.dionysus.irrigator.domain
 
 data class Rule (val sensorId: String,
                  val type: String = "",

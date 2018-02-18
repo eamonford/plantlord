@@ -1,6 +1,6 @@
-package com.dionysus
+package com.dionysus.irrigator
 
-import com.dionysus.dao.RuleRepository
+import com.dionysus.irrigator.dao.RuleRepository
 import com.github.michaelbull.result.getOr
 
 fun main(args: Array<String>) {

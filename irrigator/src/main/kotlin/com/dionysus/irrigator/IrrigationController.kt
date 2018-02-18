@@ -1,9 +1,9 @@
-package com.dionysus
+package com.dionysus.irrigator
 import com.beust.klaxon.Klaxon
-import com.dionysus.dao.RuleRepository
-import com.dionysus.domain.IrrigationCommand
-import com.dionysus.domain.Reading
-import com.dionysus.domain.Rule
+import com.dionysus.irrigator.dao.RuleRepository
+import com.dionysus.irrigator.domain.IrrigationCommand
+import com.dionysus.irrigator.domain.Reading
+import com.dionysus.irrigator.domain.Rule
 import com.github.michaelbull.result.*
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken
 import org.eclipse.paho.client.mqttv3.MqttCallback
@@ -37,13 +37,13 @@ class IrrigationController(val ruleRepository: RuleRepository,
                 .toResultOr { println("failure!"); Exception("failed to parse reading") }
                 .map { reading -> println("okay, parsed"); IrrigationCommandBuilder(reading = reading) }
                 .flatMap {  commandBuilder ->
-                    println("trying the repo");
+                    println("trying the repo")
                     ruleRepository
                             .getBySensorId(commandBuilder.reading!!.id)
                             .map { commandBuilder.copy(rule = it) }
                 }
                 .flatMap { commandBuilder ->
-                    println("calculating");
+                    println("calculating")
                     calculateDuration(commandBuilder, LitersPerSecond).map { commandBuilder.copy(duration = it) }
                 }
                 .map { IrrigationCommand(it.rule!!.valveId, it.duration!!) }
@@ -58,7 +58,7 @@ class IrrigationController(val ruleRepository: RuleRepository,
     fun calculateDuration(irrigationCommandBuilder: IrrigationCommandBuilder, litersPerSecond: Double): Result<Int, Throwable> =
             when {
                 irrigationCommandBuilder.rule == null || irrigationCommandBuilder.reading == null ->
-                    Err(Exception("Either the rule or reading is missing from the com.dionysus.main.com.dionysus.IrrigationCommandBuilder object!"))
+                    Err(Exception("Either the rule or reading is missing from the com.dionysus.irrigator.main.com.dionysus.irrigator.IrrigationCommandBuilder object!"))
                 irrigationCommandBuilder.reading.value > irrigationCommandBuilder.rule.threshold ->
                     Ok(0)
                 else ->

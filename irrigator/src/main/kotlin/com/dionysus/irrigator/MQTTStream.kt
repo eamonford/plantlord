@@ -1,4 +1,4 @@
-package com.dionysus
+package com.dionysus.irrigator
 //import org.eclipse.paho.client.mqttv3.MqttClient
 //
 //class MQTTStream(val serverUri: String, val clientId: String) {
