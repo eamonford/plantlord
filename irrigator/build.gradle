@@ -25,6 +25,8 @@ repositories {
 
 }
 dependencies {
+    compile project(':common')
+
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     compile "org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.0"
     compile "org.jetbrains.exposed:exposed:0.9.1"

@@ -1,8 +1,8 @@
 package com.dionysus.irrigator
 import com.beust.klaxon.Klaxon
+import com.dionysus.common.domain.Reading
 import com.dionysus.irrigator.dao.RuleRepository
 import com.dionysus.irrigator.domain.IrrigationCommand
-import com.dionysus.irrigator.domain.Reading
 import com.dionysus.irrigator.domain.Rule
 import com.github.michaelbull.result.*
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken
