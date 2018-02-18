@@ -10,7 +10,7 @@
 //import kotlin.test.assertTrue
 //
 //class IrrigationControllerTest : Spek({
-//    val ruleRepoMock = mock<RuleRepository> { }
+//    val ruleRepoMock = mock<PostgresDAO> { }
 //    val controller = IrrigationController(ruleRepoMock, mock())
 //
 //    given("a bad IrrigationCommandBuilder") {

@@ -1,0 +1,48 @@
+version: '2'
+services:
+    mosquitto:
+        image: eamonford/mosquitto
+        ports:
+            - "1883:1883"
+    ingestor:
+        image: eamonford/ingestor
+        depends_on:
+            - postgres
+            - mosquitto
+            - influxdb
+        environment:
+            - MQTT_URL=tcp://mosquitto:1883
+            - INFLUX_URL=http://influxdb:8086
+            - POSTGRES_URL=jdbc:postgresql://postgres/database
+    dashboard:
+        image: fg2it/grafana-armhf:v3.1.1
+        depends_on:
+            - influxdb
+        ports:
+            - "80:3000"
+        environment:
+            - VIRTUAL_HOST=localhost
+    influxdb:
+        image: influxdb
+        ports:
+            - "8086:8086"
+            - "8083:8083"
+        environment:
+            - DB_NAME=dionysus_readings
+            - DAYS_TO_RETAIN=30
+    postgres:
+        image: eamonford/rpi-postgres
+        ports:
+            - "5432:5432"
+        environment:
+            - DB_USER=admin
+            - DB_PASS=password
+            - DB_NAME=database
+    irrigator:
+        image: eamonford/irrigator
+        depends_on:
+            - postgres
+        environment:
+            - MQTT_HOST=mosquitto
+            - PG_HOST=postgres
+            - IRRIGATOR_MASTER=dozen_laser
