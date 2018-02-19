@@ -24,20 +24,15 @@ repositories {
 }
 dependencies {
     compile project(":common")
-//    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-    compile "org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.0"
-//    compile "org.jetbrains.exposed:exposed:0.9.1"
-//    compile "org.jetbrains.exposed:spring-transaction:0.9.1"
-    compile 'com.github.michaelbull:kotlin-result:1.0.8'
-//    compile 'org.postgresql:postgresql:42.1.4'
     compile 'org.influxdb:influxdb-java:2.8'
 
-//
-//    testCompile 'org.jetbrains.spek:spek-api:1.1.0'
-//    testRuntime 'org.jetbrains.spek:spek-junit-platform-engine:1.1.5'
-//    testCompile 'org.jetbrains.kotlin:kotlin-test'
-//    testCompile 'org.mockito:mockito-core:2.5.0'
-//    testCompile "com.nhaarman:mockito-kotlin:1.5.0"
+//    testCompile project(":common").sourceSets.test.output
+
+    testCompile 'org.jetbrains.spek:spek-api:1.1.0'
+    testRuntime 'org.jetbrains.spek:spek-junit-platform-engine:1.1.5'
+    testCompile 'org.jetbrains.kotlin:kotlin-test'
+    testCompile 'org.mockito:mockito-core:2.5.0'
+    testCompile "com.nhaarman:mockito-kotlin:1.5.0"
 }
 compileKotlin {
     kotlinOptions {

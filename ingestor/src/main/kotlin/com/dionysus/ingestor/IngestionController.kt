@@ -15,7 +15,7 @@ import org.eclipse.paho.client.mqttv3.MqttMessage
 
 class IngestionController(val influxDAO: InfluxDAO) : MqttCallback {
     override fun messageArrived(topic: String?, message: MqttMessage?) {
-        val messageBody = message?.payload.toString()
+        val messageBody = message?.toString() ?: return
 
         when (topic) {
             READINGS_TOPIC -> Result.of { Klaxon().parse<Reading>(messageBody) }
