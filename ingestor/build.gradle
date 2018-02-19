@@ -21,16 +21,17 @@ repositories {
     maven { url "https://jitpack.io" }
     maven { url "https://mvnrepository.com/artifact/org.postgresql/postgresql" }
     jcenter()
-
 }
 dependencies {
+    compile project(":common")
 //    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     compile "org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.0"
 //    compile "org.jetbrains.exposed:exposed:0.9.1"
 //    compile "org.jetbrains.exposed:spring-transaction:0.9.1"
     compile 'com.github.michaelbull:kotlin-result:1.0.8'
 //    compile 'org.postgresql:postgresql:42.1.4'
-//    compile 'com.beust:klaxon:2.1.5'
+    compile 'org.influxdb:influxdb-java:2.8'
+
 //
 //    testCompile 'org.jetbrains.spek:spek-api:1.1.0'
 //    testRuntime 'org.jetbrains.spek:spek-junit-platform-engine:1.1.5'

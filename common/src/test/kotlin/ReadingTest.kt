@@ -8,7 +8,7 @@ import kotlin.test.assertEquals
 
 class ReadingTest: Spek({
     given("A valid json string representing a reading") {
-        val jsonString = """{"id": "test", "value": 1.0}"""
+        val jsonString = """{"deviceId": "test", "value": 1.0}"""
         on("trying to parse the json string...") {
             val reading = Klaxon().parse<Reading>(jsonString)
             it ("should result in a value of 300") {

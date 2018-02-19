@@ -39,7 +39,7 @@ class IrrigationController(val ruleRepository: RuleRepository,
                 .flatMap {  commandBuilder ->
                     println("trying the repo")
                     ruleRepository
-                            .getBySensorId(commandBuilder.reading!!.id)
+                            .getBySensorId(commandBuilder.reading!!.deviceId)
                             .map { commandBuilder.copy(rule = it) }
                 }
                 .flatMap { commandBuilder ->
