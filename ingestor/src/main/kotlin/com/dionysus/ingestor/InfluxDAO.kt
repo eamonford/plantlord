@@ -28,7 +28,11 @@ fun Event.toPoint(): Point =
 
 open class InfluxDAO(url: String, username: String, password: String) {
 
-    private val influxDB: InfluxDB = InfluxDBFactory.connect(url, username, password)
+    private val influxDB: InfluxDB = InfluxDBFactory.connect(url, username, password).setDatabase("dionysus")
+
+    init {
+        testConnection(influxDB)
+    }
 
     open fun writeReading(reading: Reading): Result<Reading, Throwable> = Result.of { influxDB.write(reading.toPoint()); reading }
     open fun writeEvent(event: Event): Result<Event, Throwable> = Result.of { influxDB.write(event.toPoint()); event }
@@ -36,4 +40,13 @@ open class InfluxDAO(url: String, username: String, password: String) {
 
 //    influxDB.close()
 
+    fun testConnection(db: InfluxDB) {
+        val response = db.ping()
+        if (response.version.equals("unknown", ignoreCase = true)) {
+            println("Error pinging server.")
+            return
+        } else {
+            println("Connected to InfluxDB")
+        }
+    }
 }
