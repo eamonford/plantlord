@@ -16,6 +16,9 @@ repositories {
     mavenCentral()
     jcenter()
     maven { url "https://jitpack.io" }
+    maven { url "https://dl.bintray.com/kotlin/exposed" }
+    maven { url "https://mvnrepository.com/artifact/org.postgresql/postgresql" }
+
 }
 
 dependencies {
@@ -23,6 +26,11 @@ dependencies {
     compile 'com.beust:klaxon:2.1.5'
     compile "org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.0"
     compile 'com.github.michaelbull:kotlin-result:1.0.8'
+    compile "org.jetbrains.exposed:exposed:0.9.1"
+    compile 'org.postgresql:postgresql:42.1.4'
+    compile "org.jetbrains.exposed:spring-transaction:0.9.1"
+    compile 'com.github.michaelbull:kotlin-result:1.0.8'
+    compile 'com.beust:klaxon:2.1.5'
 
     testCompile 'org.jetbrains.spek:spek-api:1.1.0'
     testRuntime 'org.jetbrains.spek:spek-junit-platform-engine:1.1.5'
