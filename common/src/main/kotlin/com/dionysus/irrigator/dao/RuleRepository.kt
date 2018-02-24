@@ -14,7 +14,12 @@ open class RuleRepository {
     fun connect(): Result<RuleRepository, Throwable> {
         println("Trying to connect to Postgres")
         return Result
-                .of { Database.connect(url ="jdbc:postgresql://localhost/database", driver = "org.postgresql.Driver", user = "admin", password = "password") }
+                .of { Database.connect(
+                        url ="jdbc:postgresql://localhost/database",
+                        driver = "org.postgresql.Driver",
+                        user = "admin",
+                        password = "password"
+                ) }
                 .map { println("Connected to Postgres."); this }
     }
 

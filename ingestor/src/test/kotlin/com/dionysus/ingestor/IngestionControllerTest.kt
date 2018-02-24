@@ -1,6 +1,7 @@
 package com.dionysus.ingestor
 
 import com.dionysus.common.domain.Reading
+import com.dionysus.ingestor.dao.InfluxDAO
 import com.github.michaelbull.result.Ok
 import com.nhaarman.mockito_kotlin.*
 import org.eclipse.paho.client.mqttv3.MqttMessage
