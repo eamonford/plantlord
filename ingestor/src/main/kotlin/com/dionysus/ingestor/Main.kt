@@ -10,11 +10,15 @@ import org.eclipse.paho.client.mqttv3.MqttClient
 fun main(args: Array<String>) {
 
     val ruleRepository = RuleRepository().connect().getOr { throw Exception("rule repository didn't work") }
+//    ruleRepository.testTransaction()
+
+
+
     val enrichmentService = EnrichmentService(ruleRepository)
     val influxDAO = InfluxDAO("http://localhost:8086", "root", "root")
     val ingestionController = IngestionController(influxDAO, enrichmentService)
 
-    val mqttClient = MqttClient("tcp://localhost:1883", "ingestor").also { it.connect() }
+    val mqttClient = MqttClient("tcp://localhost:1883", "new_ingestor").also { it.connect() }
     if (mqttClient.isConnected) {
         println("Connected to MQTT")
         mqttClient.subscribe(READINGS_TOPIC)

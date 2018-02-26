@@ -1,6 +1,6 @@
 package com.dionysus.common.domain
 
-data class Rule(val sensorId: String,
+data class Rule(val sensorName: String,
                 val type: String = "",
                 val threshold: Int,
                 val target: Int,

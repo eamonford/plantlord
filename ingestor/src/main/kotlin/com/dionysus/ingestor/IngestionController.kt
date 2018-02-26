@@ -17,9 +17,16 @@ class IngestionController(private val influxDAO: InfluxDAO, private val enrichme
         message.toString()
                 .toResultOr { Exception("empty string") }
                 .flatMap { Result.of {  Klaxon().parse<Reading>(it)!! } }
+                .map { println("Received reading from sensor ${it.deviceId}."); it }
                 .flatMap { enrichmentService.enrichReading(it) }
+                .map { println("Enriched reading with sensor name ${it.sensorName}."); it }
                 .flatMap { influxDAO.writeReading(it) }
-                .mapBoth(success = { println("wrote to database") }, failure = { println("There was an error! $it") })
+                .mapBoth(success = { println("Wrote reading to database") },
+                        failure = {
+                            println("There was an error! ${it.message}")
+                            it.printStackTrace()
+                        })
+
 
 
     fun processEventsTopic(message: MqttMessage?) =

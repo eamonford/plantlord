@@ -10,6 +10,6 @@ class EnrichmentService(private val ruleRepository: RuleRepository) {
 
     fun enrichReading(reading: Reading): Result<EnrichedReading, Throwable> =
          ruleRepository
-                .getBySensorId(reading.deviceId)
-                .map { EnrichedReading(baseReading = reading, sensorName = "some sensor name") }
+                .getSensorByDeviceId(reading.deviceId)
+                .map { EnrichedReading(baseReading = reading, sensorName = it.name, type = it.type) }
 }
