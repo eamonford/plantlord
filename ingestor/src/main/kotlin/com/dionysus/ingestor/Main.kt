@@ -16,10 +16,11 @@ fun main(args: Array<String>) {
 
     val sensorsService = SensorsService(postgresDAO)
     val enrichmentService = EnrichmentService(sensorsService)
-    val influxDAO = InfluxDAO(
+    val influxDAO = InfluxDAO.connect(
             EnvironmentConfig[influx.url],
             EnvironmentConfig[influx.username],
             EnvironmentConfig[influx.password])
+    
     val ingestionController = IngestionController(influxDAO, enrichmentService)
 
     val mqttClient = MqttClient(EnvironmentConfig[mqtt.url], EnvironmentConfig[mqtt.clientid]).also { it.connect() }
