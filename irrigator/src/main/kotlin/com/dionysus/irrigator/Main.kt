@@ -1,12 +1,11 @@
 package com.dionysus.irrigator
 
-import com.dionysus.irrigator.dao.RuleRepository
-import com.github.michaelbull.result.getOr
+import com.dionysus.irrigator.dao.PostgresDAO
 
 fun main(args: Array<String>) {
-    val ruleRepository = RuleRepository().connect().getOr { throw Exception("rule repository didn't work") }
+    val ruleRepository = PostgresDAO().connect().getOr { throw Exception("rule repository didn't work") }
     IrrigationController(
-            ruleRepository = ruleRepository,
+            postgresDAO = ruleRepository,
             mqttUrl = "tcp://localhost:1883",
             clientId = "irrigator",
             sourceTopic = "irrigator.source",

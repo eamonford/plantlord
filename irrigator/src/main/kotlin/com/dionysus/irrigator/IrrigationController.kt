@@ -1,7 +1,7 @@
 package com.dionysus.irrigator
 import com.beust.klaxon.Klaxon
 import com.dionysus.common.domain.Reading
-import com.dionysus.irrigator.dao.RuleRepository
+import com.dionysus.irrigator.dao.PostgresDAO
 import com.dionysus.irrigator.domain.IrrigationCommand
 import com.dionysus.common.domain.Rule
 import com.github.michaelbull.result.*
@@ -12,7 +12,7 @@ import org.eclipse.paho.client.mqttv3.MqttMessage
 
 data class IrrigationCommandBuilder(val rule: Rule? = null, val reading: Reading? = null, val duration: Int? = null)
 
-class IrrigationController(val ruleRepository: RuleRepository,
+class IrrigationController(val postgresDAO: PostgresDAO,
                            val mqttUrl: String,
                            val sourceTopic: String,
                            val sinkTopic: String,
@@ -38,7 +38,7 @@ class IrrigationController(val ruleRepository: RuleRepository,
                 .map { reading -> println("okay, parsed"); IrrigationCommandBuilder(reading = reading) }
                 .flatMap {  commandBuilder ->
                     println("trying the repo")
-                    ruleRepository
+                    postgresDAO
                             .getBySensorId(commandBuilder.reading!!.deviceId)
                             .map { commandBuilder.copy(rule = it) }
                 }
