@@ -20,7 +20,8 @@ private val logger = KotlinLogging.logger {}
 class IngestionController(private val influxDAO: InfluxDAO, private val enrichmentService: EnrichmentService) : MqttCallback {
 
     fun processReadingsTopic(message: MqttMessage?): Result<EnrichedReading, Throwable> =
-            message.toString()
+            message
+                    .toString()
                     .toResultOr { DionysusParseException("The reading was an empty string") }
                     .flatMap { Result.of { Klaxon().parse<Reading>(it)!! } }
                     .mapError { e -> DionysusParseException("Could not parse message: ${message.toString()}", e) }
@@ -28,7 +29,8 @@ class IngestionController(private val influxDAO: InfluxDAO, private val enrichme
                     .flatMap { influxDAO.writeReading(it) }
 
     fun processEventsTopic(message: MqttMessage?) =
-            message.toString()
+            message
+                    .toString()
                     .toResultOr { DionysusParseException("The event was an empty string") }
                     .flatMap { Result.of { Klaxon().parse<Event>(it)!! } }
                     .mapError { e -> DionysusParseException("Could not parse message: ${message.toString()}", e) }
