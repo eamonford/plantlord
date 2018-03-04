@@ -2,12 +2,15 @@ package com.dionysus.ingestor.dao
 
 import com.dionysus.common.domain.Event
 import com.dionysus.ingestor.domain.EnrichedReading
+import com.dionysus.irrigator.dao.DionysusConnectionException
 import com.github.michaelbull.result.Result
+import mu.KotlinLogging
 import org.influxdb.InfluxDB
 import org.influxdb.InfluxDBFactory
 import org.influxdb.dto.Point
 import java.util.concurrent.TimeUnit
 
+private val logger = KotlinLogging.logger {}
 
 fun EnrichedReading.toPoint(): Point =
         Point
@@ -41,10 +44,9 @@ open class InfluxDAO private constructor(private val influxDB: InfluxDB) {
     companion object {
         fun connect(url: String, username: String, password: String): InfluxDAO {
             val influxDB: InfluxDB = InfluxDBFactory.connect(url, username, password).setDatabase("dionysus")
-            val dao = InfluxDAO(influxDB)
-            if (dao.canConnect())
-                return dao
-            throw Exception("can't connect to influx")
+            val dao = InfluxDAO(influxDB).testConnection(url)
+            logger.info { "Connected to InfluxDB at $url" }
+            return dao
         }
     }
 
@@ -58,7 +60,12 @@ open class InfluxDAO private constructor(private val influxDB: InfluxDB) {
 
     open fun writeEvent(event: Event): Result<Event, Throwable> = Result.of { influxDB.write(event.toPoint()); event }
 
-    private fun canConnect(): Boolean =
-            influxDB.ping().version.equals("unknown", ignoreCase = true)
-
+    fun testConnection(url: String): InfluxDAO {
+        try {
+            influxDB.ping().version.startsWith("v", ignoreCase = true)
+        } catch (e: Throwable) {
+            throw DionysusConnectionException("Could not connect to InfluxDB at $url", e)
+        }
+        return this
+    }
 }

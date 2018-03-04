@@ -5,7 +5,10 @@ import com.dionysus.common.domain.READINGS_TOPIC
 import com.dionysus.common.domain.SensorsService
 import com.dionysus.ingestor.dao.InfluxDAO
 import com.dionysus.irrigator.dao.PostgresDAO
+import mu.KotlinLogging
 import org.eclipse.paho.client.mqttv3.MqttClient
+
+private val logger = KotlinLogging.logger {}
 
 fun main(args: Array<String>) {
 
@@ -13,14 +16,13 @@ fun main(args: Array<String>) {
             EnvironmentConfig[postgres.url],
             EnvironmentConfig[postgres.username],
             EnvironmentConfig[postgres.password])
-
     val sensorsService = SensorsService(postgresDAO)
     val enrichmentService = EnrichmentService(sensorsService)
     val influxDAO = InfluxDAO.connect(
             EnvironmentConfig[influx.url],
             EnvironmentConfig[influx.username],
             EnvironmentConfig[influx.password])
-    
+
     val ingestionController = IngestionController(influxDAO, enrichmentService)
 
     val mqttClient = MqttClient(EnvironmentConfig[mqtt.url], EnvironmentConfig[mqtt.clientid]).also { it.connect() }
