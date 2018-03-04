@@ -1,5 +1,6 @@
-package com.dionysus.irrigator.dao
+package com.dionysus.common.dao
 
+import com.dionysus.common.exceptions.DionysusConnectionException
 import mu.KotlinLogging
 import org.jetbrains.exposed.sql.Database
 

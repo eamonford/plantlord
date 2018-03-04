@@ -1,4 +1,4 @@
-package com.dionysus.ingestor
+package com.dionysus.ingestor.config
 
 import com.natpryce.konfig.*
 

@@ -1,6 +1,7 @@
-package com.dionysus.common.domain
+package com.dionysus.common.services
 
-import com.dionysus.irrigator.dao.PostgresDAO
+import com.dionysus.common.dao.PostgresDAO
+import com.dionysus.common.domain.Sensor
 import com.github.michaelbull.result.Result
 import org.jetbrains.exposed.dao.EntityID
 import org.jetbrains.exposed.dao.IntEntity

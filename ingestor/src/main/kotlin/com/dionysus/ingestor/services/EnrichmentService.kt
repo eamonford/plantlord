@@ -1,14 +1,14 @@
-package com.dionysus.ingestor
+package com.dionysus.ingestor.services
 
 import com.dionysus.common.domain.Reading
-import com.dionysus.common.domain.SensorsService
+import com.dionysus.common.services.SensorsService
 import com.dionysus.ingestor.domain.EnrichedReading
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.map
 
-class EnrichmentService(private val sensorsService: SensorsService) {
+open class EnrichmentService(private val sensorsService: SensorsService) {
 
-    fun enrichReading(reading: Reading): Result<EnrichedReading, Throwable> =
+    open fun enrichReading(reading: Reading): Result<EnrichedReading, Throwable> =
          sensorsService
                 .getSensorByDeviceId(reading.deviceId)
                 .map { EnrichedReading(baseReading = reading, sensorName = it.name, type = it.type) }

@@ -1,11 +1,16 @@
 package com.dionysus.ingestor
 
-import com.dionysus.common.domain.EVENTS_TOPIC
-import com.dionysus.common.domain.READINGS_TOPIC
-import com.dionysus.common.domain.SensorsService
+import com.dionysus.common.EVENTS_TOPIC
+import com.dionysus.common.READINGS_TOPIC
+import com.dionysus.common.dao.PostgresDAO
+import com.dionysus.common.services.SensorsService
+import com.dionysus.common.exceptions.DionysusConnectionException
+import com.dionysus.ingestor.config.EnvironmentConfig
+import com.dionysus.ingestor.config.influx
+import com.dionysus.ingestor.config.mqtt
+import com.dionysus.ingestor.config.postgres
 import com.dionysus.ingestor.dao.InfluxDAO
-import com.dionysus.irrigator.dao.DionysusConnectionException
-import com.dionysus.irrigator.dao.PostgresDAO
+import com.dionysus.ingestor.services.EnrichmentService
 import mu.KotlinLogging
 import org.eclipse.paho.client.mqttv3.MqttClient
 

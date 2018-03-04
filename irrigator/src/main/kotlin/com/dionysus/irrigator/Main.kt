@@ -1,6 +1,6 @@
 package com.dionysus.irrigator
 
-import com.dionysus.irrigator.dao.PostgresDAO
+import com.dionysus.common.dao.PostgresDAO
 
 fun main(args: Array<String>) {
     val ruleRepository = PostgresDAO().connect().getOr { throw Exception("rule repository didn't work") }

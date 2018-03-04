@@ -2,7 +2,7 @@ package com.dionysus.ingestor.dao
 
 import com.dionysus.common.domain.Event
 import com.dionysus.ingestor.domain.EnrichedReading
-import com.dionysus.irrigator.dao.DionysusConnectionException
+import com.dionysus.common.exceptions.DionysusConnectionException
 import com.github.michaelbull.result.Result
 import mu.KotlinLogging
 import org.influxdb.InfluxDB
@@ -35,7 +35,7 @@ fun Event.toPoint(): Point =
                 .measurement("events")
                 .time(System.currentTimeMillis(), TimeUnit.MILLISECONDS)
                 .addField("value", value)
-                .tag("valveId", valveId)
+                .tag("valveId", valveId.toString())
                 .build()
 
 
