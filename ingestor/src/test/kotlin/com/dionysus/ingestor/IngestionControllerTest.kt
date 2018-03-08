@@ -2,6 +2,7 @@ package com.dionysus.ingestor
 
 import com.dionysus.common.domain.Event
 import com.dionysus.common.domain.Reading
+import com.dionysus.common.exceptions.DionysusConnectionException
 import com.dionysus.common.exceptions.DionysusParseException
 import com.dionysus.ingestor.dao.InfluxDAO
 import com.dionysus.ingestor.domain.EnrichedReading
@@ -49,7 +50,7 @@ class IngestionControllerTest : Spek({
                 verifyZeroInteractions(mockEnrichmentService)
                 verifyZeroInteractions(mockInfluxDAO)
                 assertTrue { result is Err }
-                assertTrue { result.getError() is DionysusParseException }
+                assertTrue { result.getError() is DionysusConnectionException }
             }
         }
     }
