@@ -3,8 +3,8 @@ package com.dionysus.ingestor
 import com.dionysus.common.EVENTS_TOPIC
 import com.dionysus.common.READINGS_TOPIC
 import com.dionysus.common.dao.PostgresDAO
-import com.dionysus.common.services.SensorsService
 import com.dionysus.common.exceptions.DionysusConnectionException
+import com.dionysus.common.services.SensorsService
 import com.dionysus.ingestor.config.EnvironmentConfig
 import com.dionysus.ingestor.config.influx
 import com.dionysus.ingestor.config.mqtt

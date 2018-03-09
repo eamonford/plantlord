@@ -50,7 +50,7 @@ class IngestionControllerTest : Spek({
                 verifyZeroInteractions(mockEnrichmentService)
                 verifyZeroInteractions(mockInfluxDAO)
                 assertTrue { result is Err }
-                assertTrue { result.getError() is DionysusConnectionException }
+                assertTrue { result.getError() is DionysusParseException }
             }
         }
     }
