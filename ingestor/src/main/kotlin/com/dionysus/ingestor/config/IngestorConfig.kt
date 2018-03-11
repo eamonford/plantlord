@@ -19,4 +19,5 @@ object postgres : PropertyGroup() {
     val password by stringType
 }
 
-val EnvironmentConfig = EnvironmentVariables()
+val EnvironmentConfig = EnvironmentVariables() overriding
+ConfigurationProperties.fromResource("defaults.properties")

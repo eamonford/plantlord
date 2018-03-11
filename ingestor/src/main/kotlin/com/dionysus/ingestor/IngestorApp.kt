@@ -38,6 +38,7 @@ fun main(args: Array<String>) {
        mqttClient.subscribe(EVENTS_TOPIC)
        logger.info { "Connected to MQTT at $mqttUrl" }
 
+       logger.info { "Ingestor has started." }
        mqttClient.setCallback(ingestionController)
    } catch (e: Throwable) {
        throw DionysusConnectionException("Connection to MQTT failed for $mqttUrl", e)
