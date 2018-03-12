@@ -17,7 +17,7 @@ fun EnrichedReading.toPoint(): Point =
                 .measurement(type)
                 .time(System.currentTimeMillis(), TimeUnit.MILLISECONDS)
                 .addField("value", value)
-                .addField("sensorName", sensorName)
+                .tag("sensorName", sensorName)
                 .tag("deviceId", deviceId)
                 .build()
 
@@ -26,7 +26,7 @@ fun EnrichedReading.toPointForBattery(): Point =
                 .measurement("battery")
                 .time(System.currentTimeMillis(), TimeUnit.MILLISECONDS)
                 .addField("value", battery)
-                .addField("sensorName", sensorName)
+                .tag("sensorName", sensorName)
                 .tag("deviceId", deviceId)
                 .build()
 
