@@ -13,6 +13,8 @@ import com.dionysus.ingestor.dao.InfluxDAO
 import com.dionysus.ingestor.services.EnrichmentService
 import mu.KotlinLogging
 import org.eclipse.paho.client.mqttv3.MqttClient
+import org.flywaydb.core.Flyway
+
 
 private val logger = KotlinLogging.logger {}
 
@@ -31,16 +33,23 @@ fun main(args: Array<String>) {
 
     val ingestionController = IngestionController(influxDAO, enrichmentService)
 
-    val mqttUrl = EnvironmentConfig[mqtt.url]
-   try {
-       val mqttClient = MqttClient(mqttUrl, EnvironmentConfig[mqtt.clientid]).also { it.connect() }
-       mqttClient.subscribe(READINGS_TOPIC)
-       mqttClient.subscribe(EVENTS_TOPIC)
-       logger.info { "Connected to MQTT at $mqttUrl" }
+    val flyway = Flyway()
+    flyway.setDataSource(
+            EnvironmentConfig[postgres.url],
+            EnvironmentConfig[postgres.username],
+            EnvironmentConfig[postgres.password])
+    flyway.migrate()
 
-       logger.info { "Ingestor has started." }
-       mqttClient.setCallback(ingestionController)
-   } catch (e: Throwable) {
-       throw DionysusConnectionException("Connection to MQTT failed for $mqttUrl", e)
-   }
+    val mqttUrl = EnvironmentConfig[mqtt.url]
+    try {
+        val mqttClient = MqttClient(mqttUrl, EnvironmentConfig[mqtt.clientid]).also { it.connect() }
+        mqttClient.subscribe(READINGS_TOPIC)
+        mqttClient.subscribe(EVENTS_TOPIC)
+        logger.info { "Connected to MQTT at $mqttUrl" }
+
+        logger.info { "Ingestor has started." }
+        mqttClient.setCallback(ingestionController)
+    } catch (e: Throwable) {
+        throw DionysusConnectionException("Connection to MQTT failed for $mqttUrl", e)
+    }
 }
