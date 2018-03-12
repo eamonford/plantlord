@@ -45,7 +45,6 @@ class IngestionController(private val influxDAO: InfluxDAO, private val enrichme
             EVENTS_TOPIC -> processEventsTopic(message).mapBoth(
                     success = { logger.info { "Wrote event to database for valve ID ${it.valveId}" } },
                     failure = { logger.error("Failed to write event to database.", it) })
-
         }
     }
 
