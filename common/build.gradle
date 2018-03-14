@@ -1,6 +1,6 @@
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-    compile 'com.beust:klaxon:2.1.5'
+    compile 'com.beust:klaxon:2.1.13'
     compile "org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.0"
     compile 'com.github.michaelbull:kotlin-result:1.0.8'
     compile "org.jetbrains.exposed:exposed:0.10.1"
@@ -10,6 +10,7 @@ dependencies {
     compile 'com.beust:klaxon:2.1.5'
     compile 'com.natpryce:konfig:1.6.1.0'
     compile 'io.github.microutils:kotlin-logging:1.4.9'
+    compile 'org.influxdb:influxdb-java:2.8'
 
     runtime 'org.slf4j:slf4j-simple:1.7.25'
 

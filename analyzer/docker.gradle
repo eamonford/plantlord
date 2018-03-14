@@ -1,0 +1,28 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.bmuschko:gradle-docker-plugin:3.2.5'
+
+    }
+}
+
+apply plugin: 'com.bmuschko.docker-java-application'
+
+mainClassName = 'com.dionysus.analyzer.AnalyzerAppKt'
+
+docker {
+    javaApplication {
+        baseImage = 'resin/raspberry-pi-openjdk:openjdk-8-jre'
+        maintainer = 'Eamon Ford "eamonford@gmail.com"'
+        tag = 'eamonford/analyzer'
+    }
+
+    registryCredentials {
+        username = project.property('docker.registry.username')
+        password = project.property('docker.registry.password')
+        email = project.property('docker.registry.email')
+    }
+}

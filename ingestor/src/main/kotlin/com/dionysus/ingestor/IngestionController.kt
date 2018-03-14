@@ -4,12 +4,13 @@ import com.beust.klaxon.Klaxon
 import com.dionysus.common.ENRICHED_READINGS_TOPIC
 import com.dionysus.common.EVENTS_TOPIC
 import com.dionysus.common.READINGS_TOPIC
+import com.dionysus.common.domain.EnrichedReading
 import com.dionysus.common.domain.Event
 import com.dionysus.common.domain.Reading
 import com.dionysus.common.exceptions.DionysusConnectionException
 import com.dionysus.common.exceptions.DionysusParseException
-import com.dionysus.ingestor.dao.InfluxDAO
-import com.dionysus.ingestor.domain.EnrichedReading
+import com.dionysus.common.services.EventsService
+import com.dionysus.common.services.ReadingsService
 import com.dionysus.ingestor.services.EnrichmentService
 import com.github.michaelbull.result.*
 import mu.KotlinLogging
@@ -20,12 +21,10 @@ import org.eclipse.paho.client.mqttv3.MqttMessage
 
 private val logger = KotlinLogging.logger {}
 
-class IngestionController(private val influxDAO: InfluxDAO,
+class IngestionController(private val eventsService: EventsService,
+                          private val readingsService: ReadingsService,
                           private val enrichmentService: EnrichmentService,
-                          private val mqttUrl: String,
-                          mqttClientId: String) : MqttCallback {
-
-    private val mqttClient = MqttAsyncClient(mqttUrl, mqttClientId)
+                          private val mqttClient: MqttAsyncClient) : MqttCallback {
 
     init {
         mqttClient.setCallback(this)
@@ -36,11 +35,11 @@ class IngestionController(private val influxDAO: InfluxDAO,
         try {
             while (!mqttClient.isConnected) mqttClient.connect().waitForCompletion()
 
-            logger.info { "Connected to MQTT at $mqttUrl" }
+            logger.info { "Connected to MQTT at ${mqttClient.serverURI}" }
             mqttClient.subscribe(READINGS_TOPIC, 0)
             mqttClient.subscribe(EVENTS_TOPIC, 0)
         } catch (e: Throwable) {
-            throw DionysusConnectionException("Connection to MQTT failed for $mqttUrl", e)
+            throw DionysusConnectionException("Connection to MQTT failed for ${mqttClient.serverURI}", e)
         }
     }
 
@@ -51,7 +50,7 @@ class IngestionController(private val influxDAO: InfluxDAO,
                     .flatMap { Result.of { Klaxon().parse<Reading>(it)!! } }
                     .mapError { e -> DionysusParseException("Could not parse message: ${message.toString()}", e) }
                     .flatMap { enrichmentService.enrichReading(it) }
-                    .flatMap { influxDAO.writeReading(it) }
+                    .flatMap { readingsService.write(it) }
                     .flatMap { publishEnrichedReading(it) }
 
     fun processEventsTopic(message: MqttMessage?) =
@@ -60,7 +59,8 @@ class IngestionController(private val influxDAO: InfluxDAO,
                     .toResultOr { DionysusParseException("The event was an empty string") }
                     .flatMap { Result.of { Klaxon().parse<Event>(it)!! } }
                     .mapError { e -> DionysusParseException("Could not parse message: ${message.toString()}", e) }
-                    .flatMap { influxDAO.writeEvent(it) }
+                    .flatMap { enrichmentService.enrichEvent(it) }
+                    .flatMap { eventsService.write(it) }
 
     override fun messageArrived(topic: String?, message: MqttMessage?) {
         when (topic) {
@@ -83,7 +83,7 @@ class IngestionController(private val influxDAO: InfluxDAO,
             }
 
     override fun connectionLost(cause: Throwable?) {
-        logger.error ( "Lost MQTT connection. Will attempt to reconnect...", cause )
+        logger.error("Lost MQTT connection. Will attempt to reconnect...", cause)
         connectToMqtt()
     }
 

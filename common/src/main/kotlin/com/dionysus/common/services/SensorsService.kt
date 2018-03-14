@@ -2,7 +2,10 @@ package com.dionysus.common.services
 
 import com.dionysus.common.dao.PostgresDAO
 import com.dionysus.common.domain.Sensor
+import com.dionysus.common.exceptions.DionysusNotFoundException
 import com.github.michaelbull.result.Result
+import com.github.michaelbull.result.map
+import com.github.michaelbull.result.mapError
 import org.jetbrains.exposed.dao.EntityID
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
@@ -22,9 +25,8 @@ class SensorDTO(id: EntityID<Int>) : IntEntity(id) {
     var deviceId by Sensors.deviceId
     var name by Sensors.name
     var plantId by Sensors.plantId
-    val rules by RuleDTO referrersOn Rules.sensor
 
-    fun toSensor() = Sensor(deviceId = deviceId, name = name, type = "moisture")
+    fun toSensor() = Sensor(deviceId = deviceId, name = name, type = "moisture", plantId = plantId)
 }
 
 class SensorsService(DAO: PostgresDAO) {
@@ -34,6 +36,11 @@ class SensorsService(DAO: PostgresDAO) {
                     SensorDTO
                             .find { Sensors.deviceId eq deviceId }
                             .first()
-                }.toSensor()
-            }
+                }
+            }.mapError {
+                when (it) {
+                    is NoSuchElementException -> DionysusNotFoundException("There is no sensor with device ID $deviceId", it)
+                    else -> it
+                }
+            }.map { it.toSensor() }
 }
