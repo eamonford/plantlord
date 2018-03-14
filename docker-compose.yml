@@ -18,6 +18,13 @@ services:
             - POSTGRES_URL=jdbc:postgresql://postgres/postgres
             - POSTGRES_USERNAME=postgres
             - POSTGRES_PASSWORD=password
+    analyzer:
+        image: eamonford/analyzer
+        restart: always
+        depends_on:
+            - influxdb
+        environment:
+            - INFLUX_URL=http://influxdb:8086
     dashboard:
         image: fg2it/grafana-armhf:v3.1.1
         restart: always
@@ -53,4 +60,3 @@ services:
             - IRRIGATOR_MASTER=dozen_laser
             - POSTGRES_USERNAME=postgres
             - POSTGRES_PASSWORD=password
-

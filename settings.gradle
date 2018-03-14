@@ -15,6 +15,6 @@ include 'api'
 include 'services:webservice'
 */
 
-include 'common', 'irrigator', 'ingestor'
+include 'common', 'irrigator', 'ingestor', 'analyzer'
 
 rootProject.name = 'Dionysus'
