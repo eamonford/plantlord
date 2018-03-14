@@ -11,8 +11,6 @@ buildscript {
 
 dependencies {
     compile project(":common")
-    compile project(":common").sourceSets.test.output
-
     compile 'org.flywaydb:flyway-core:5.0.7'
     compile 'org.influxdb:influxdb-java:2.8'
 }

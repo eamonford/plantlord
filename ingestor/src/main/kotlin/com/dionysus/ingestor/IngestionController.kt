@@ -1,6 +1,7 @@
 package com.dionysus.ingestor
 
 import com.beust.klaxon.Klaxon
+import com.dionysus.common.ENRICHED_READINGS_TOPIC
 import com.dionysus.common.EVENTS_TOPIC
 import com.dionysus.common.READINGS_TOPIC
 import com.dionysus.common.domain.Event
@@ -13,11 +14,14 @@ import com.github.michaelbull.result.*
 import mu.KotlinLogging
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken
 import org.eclipse.paho.client.mqttv3.MqttCallback
+import org.eclipse.paho.client.mqttv3.MqttClient
 import org.eclipse.paho.client.mqttv3.MqttMessage
 
 private val logger = KotlinLogging.logger {}
 
-class IngestionController(private val influxDAO: InfluxDAO, private val enrichmentService: EnrichmentService) : MqttCallback {
+class IngestionController(private val influxDAO: InfluxDAO,
+                          private val enrichmentService: EnrichmentService,
+                          private val mqttClient: MqttClient) : MqttCallback {
 
     fun processReadingsTopic(message: MqttMessage?): Result<EnrichedReading, Throwable> =
             message
@@ -27,6 +31,7 @@ class IngestionController(private val influxDAO: InfluxDAO, private val enrichme
                     .mapError { e -> DionysusParseException("Could not parse message: ${message.toString()}", e) }
                     .flatMap { enrichmentService.enrichReading(it) }
                     .flatMap { influxDAO.writeReading(it) }
+                    .flatMap { publishEnrichedReading(it) }
 
     fun processEventsTopic(message: MqttMessage?) =
             message
@@ -47,6 +52,14 @@ class IngestionController(private val influxDAO: InfluxDAO, private val enrichme
                     failure = { logger.error("Failed to write event to database.", it) })
         }
     }
+
+    private fun publishEnrichedReading(enrichedReading: EnrichedReading): Result<EnrichedReading, Throwable> =
+            Result.of {
+                mqttClient.publish(
+                        ENRICHED_READINGS_TOPIC,
+                        MqttMessage(Klaxon().toJsonString(enrichedReading).toByteArray()))
+                enrichedReading
+            }
 
     override fun connectionLost(cause: Throwable?) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
