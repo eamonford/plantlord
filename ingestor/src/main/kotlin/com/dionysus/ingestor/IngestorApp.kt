@@ -42,8 +42,8 @@ fun main(args: Array<String>) {
     val mqttUrl = IngestorConfig[mqtt.url]
     try {
         val mqttClient = MqttClient(mqttUrl, IngestorConfig[mqtt.clientid]).also { it.connect() }
-        mqttClient.subscribe(READINGS_TOPIC)
-        mqttClient.subscribe(EVENTS_TOPIC)
+        mqttClient.subscribe(READINGS_TOPIC, 2)
+        mqttClient.subscribe(EVENTS_TOPIC, 2)
         logger.info { "Connected to MQTT at $mqttUrl" }
 
         val ingestionController = IngestionController(influxDAO, enrichmentService, mqttClient)

@@ -287,7 +287,7 @@
       "panels": [
         {
           "aliasColors": {},
-          "bars": false,
+          "bars": true,
           "datasource": "${DS_PLANT_LORD INFLUXDB}",
           "editable": true,
           "error": false,
@@ -309,13 +309,13 @@
             "total": false,
             "values": false
           },
-          "lines": true,
+          "lines": false,
           "linewidth": 2,
           "links": [],
           "nullPointMode": "connected",
           "percentage": false,
           "pointradius": 5,
-          "points": false,
+          "points": true,
           "renderer": "flot",
           "seriesOverrides": [],
           "span": 12,
@@ -438,7 +438,7 @@
     "list": []
   },
   "schemaVersion": 12,
-  "version": 3,
+  "version": 4,
   "links": [],
   "gnetId": null
 }
