@@ -34,9 +34,9 @@ class IngestionController(private val influxDAO: InfluxDAO,
 
     private fun connectToMqtt() {
         try {
-            mqttClient.connect().waitForCompletion()
-            logger.info { "Connected to MQTT at $mqttUrl" }
+            while (!mqttClient.isConnected) mqttClient.connect().waitForCompletion()
 
+            logger.info { "Connected to MQTT at $mqttUrl" }
             mqttClient.subscribe(READINGS_TOPIC, 0)
             mqttClient.subscribe(EVENTS_TOPIC, 0)
         } catch (e: Throwable) {
@@ -83,11 +83,11 @@ class IngestionController(private val influxDAO: InfluxDAO,
             }
 
     override fun connectionLost(cause: Throwable?) {
-        logger.warn { "Lost MQTT connection. Will attempt to reconnect..." }
+        logger.error ( "Lost MQTT connection. Will attempt to reconnect...", cause )
         connectToMqtt()
     }
 
     override fun deliveryComplete(token: IMqttDeliveryToken?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        logger.info { "Published message to topic ${token?.topics?.first()}" }
     }
 }
