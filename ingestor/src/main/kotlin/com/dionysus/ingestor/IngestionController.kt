@@ -6,6 +6,7 @@ import com.dionysus.common.EVENTS_TOPIC
 import com.dionysus.common.READINGS_TOPIC
 import com.dionysus.common.domain.Event
 import com.dionysus.common.domain.Reading
+import com.dionysus.common.exceptions.DionysusConnectionException
 import com.dionysus.common.exceptions.DionysusParseException
 import com.dionysus.ingestor.dao.InfluxDAO
 import com.dionysus.ingestor.domain.EnrichedReading
@@ -13,15 +14,35 @@ import com.dionysus.ingestor.services.EnrichmentService
 import com.github.michaelbull.result.*
 import mu.KotlinLogging
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken
+import org.eclipse.paho.client.mqttv3.MqttAsyncClient
 import org.eclipse.paho.client.mqttv3.MqttCallback
-import org.eclipse.paho.client.mqttv3.MqttClient
 import org.eclipse.paho.client.mqttv3.MqttMessage
 
 private val logger = KotlinLogging.logger {}
 
 class IngestionController(private val influxDAO: InfluxDAO,
                           private val enrichmentService: EnrichmentService,
-                          private val mqttClient: MqttClient) : MqttCallback {
+                          private val mqttUrl: String,
+                          mqttClientId: String) : MqttCallback {
+
+    private val mqttClient = MqttAsyncClient(mqttUrl, mqttClientId)
+
+    init {
+        mqttClient.setCallback(this)
+        connectToMqtt()
+    }
+
+    private fun connectToMqtt() {
+        try {
+            mqttClient.connect().waitForCompletion()
+            logger.info { "Connected to MQTT at $mqttUrl" }
+
+            mqttClient.subscribe(READINGS_TOPIC, 0)
+            mqttClient.subscribe(EVENTS_TOPIC, 0)
+        } catch (e: Throwable) {
+            throw DionysusConnectionException("Connection to MQTT failed for $mqttUrl", e)
+        }
+    }
 
     fun processReadingsTopic(message: MqttMessage?): Result<EnrichedReading, Throwable> =
             message
@@ -62,7 +83,8 @@ class IngestionController(private val influxDAO: InfluxDAO,
             }
 
     override fun connectionLost(cause: Throwable?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        logger.warn { "Lost MQTT connection. Will attempt to reconnect..." }
+        connectToMqtt()
     }
 
     override fun deliveryComplete(token: IMqttDeliveryToken?) {
